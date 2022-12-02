@@ -1,6 +1,6 @@
 require 'pry'
 
-INPUT_FILE = "1_input.txt"
+INPUT_FILE = "input.txt"
 
 class Main
   attr_reader :elves
