@@ -1,5 +1,3 @@
-require 'pry'
-
 actual_input = File.read('02_input.txt')
 test_input = <<~INPUT
   7 6 4 2 1
