@@ -74,42 +74,5 @@ test_input = test_input.split("\n").map { |line| line.split('') }
 actual_input = File.read('04_input.txt').split("\n").map { |line| line.split('') }
 
 
-puts "Part 1"
-puts array_match(actual_input)
-puts "Part 2"
-puts array_match(test_input)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+puts "Part 2: #{array_match(test_input)}"
+puts "Part 1: #{array_match(actual_input)}"
