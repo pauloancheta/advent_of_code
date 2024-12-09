@@ -19,11 +19,9 @@ actual_input = File.read('06_input.txt')
 input = ENV['ACTUAL'].nil? ? test_input : actual_input
 input = input.split("\n").map { |input| input.split('') }
 
-@x, @y, @move_count, @loop, @run_count = 0, 0, 0, 0, 0
-@pointer = ""
+@x, @y, @move_count, @loop = 0, 0, 0, 0
 @visited = Hash.new { |k,v| v = 0 }
 @block_history = Hash.new { |k,v| v = 0 }
-@loop_history = Hash.new { |k,v| v = 0 }
 @try_loop = true
 @current_block = []
 
@@ -32,7 +30,7 @@ def vis(input)
     row.each { |char| print char }
     puts
   end
-  puts "#{@block_history.count} loop: #{@loop}" if @run_count % 100_000 == 0
+  puts "#{@block_history.count} loop: #{@loop}"
 end
 
 def find_pointer(input)
@@ -103,19 +101,13 @@ def reset!
   @visited = Hash.new { |k,v| v = 0 }
 end
 
-def looped?
-  @visited[[@x, @y]] > 3 # break from infinite loop
-end
-
 def run
   loop do
-    @run_count += 1
     calculate_next_move
     if out_of_bounds?
       break if @current_block.empty?
       reset!
-    elsif looped?
-      @loop_history[@current_block] += 1
+    elsif @visited[[@x, @y]] > 3 # break from infinite loop
       @loop += 1
       reset!
     else
@@ -136,10 +128,5 @@ find_pointer(input)
 
 run
 puts @visited.count
-puts "final loop count: #{@loop_history.count}"
+puts "final loop count: #{@loop}"
 puts "final block_history count: #{@block_history.count}"
-
-@loop_history.each do |key, value|
-  x, y = key
-  @input[y][x] = "O"
-end
