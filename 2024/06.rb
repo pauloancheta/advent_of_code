@@ -19,6 +19,11 @@ actual_input = File.read('06_input.txt')
 input = ENV['ACTUAL'].nil? ? test_input : actual_input
 input = input.split("\n").map { |input| input.split('') }
 
+# There's only 2 distinct ways to go to a coordinate horizontal, and vertical
+# because we only turn to one direction (right). We can therefore say if we
+# reached a coordinate the 3rd time, that guarantees a loop
+MAX_VISIT_BEFORE_LOOP = 3
+
 @x, @y, @move_count, @loop = 0, 0, 0, 0
 @visited = Hash.new { |k,v| v = 0 }
 @block_history = Hash.new { |k,v| v = 0 }
@@ -107,7 +112,7 @@ def run
     if out_of_bounds?
       break if @current_block.empty?
       reset!
-    elsif @visited[[@x, @y]] > 3 # break from infinite loop
+    elsif @visited[[@x, @y]] > MAX_VISIT_BEFORE_LOOP
       @loop += 1
       reset!
     else
@@ -121,12 +126,15 @@ def run
   @visited[[@x, @y]] += 1
 end
 
+start = Time.now
+
 # initialize pointer values
 find_pointer(input)
 @orig_x, @orig_y, @orig_pointer = @x, @y, @pointer
 @max_x, @max_y = @input.first.length, @input.length
 
 run
-puts @visited.count
-puts "final loop count: #{@loop}"
-puts "final block_history count: #{@block_history.count}"
+puts "Visited count #{@visited.count}"
+puts "Loop count: #{@loop}"
+end_time = Time.now
+puts "Time elapsed: #{end_time - start} seconds"
