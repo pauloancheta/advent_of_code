@@ -1,7 +1,5 @@
 # rubocop:disable all
 
-require 'pry'
-
 test_input = <<~INPUT
   190: 10 19
   3267: 81 40 27
@@ -31,49 +29,28 @@ def permutations(digits, current = [], operators)
   result
 end
 
-def guess_operators(target, integers, comb)
+def target_equal?(target, integers, comb)
+  return false if comb.last == "||" && target.to_s[-1] != integers.last.to_s[-1]
+  return false if comb.last == "*" && target % integers.last != 0
+
   initial = integers.shift
   result = integers.inject(initial) do |memo, i|
+    break 0 if memo > target
     eq = comb.shift
-    to_eval = if eq == "||"
-                [memo, i].join
-              else
-                [memo, eq, i].join(' ')
-              end
-    memo = eval(to_eval)
+    to_eval = eq == "||" ? [memo, i] : [memo, eq, i]
+    memo = eval(to_eval.join)
   end
 
   target == result
 end
 
 def run(input, operators)
-  keys = []
-
-  input.each do |target, integers|
+  input.inject(0) do |memo, (target, integers)|
     comb = permutations(integers.length - 1, operators)
-    still_finding = true
-
-    comb.each do |c|
-      break unless still_finding
-      if still_finding && guess_operators(target, integers.dup, c.dup)
-        keys << target
-        still_finding = false
-      end
-    end
+    memo += target if comb.any? { |c| target_equal?(target, integers.dup, c) }
+    memo
   end
-
-  keys.sum
 end
 
-part_1 = %w[* +]
-part_2 = %w[* + ||]
-
-# puts "Part 1: #{run(input, part_1)}"
-
-start_time = Time.now
-puts "Part 2: #{run(input, part_2)}"
-end_time = Time.now
-puts "time: #{ end_time - start_time }"
-
-# 328790210468594
-# 296
+puts "Part 1: #{run(input, %w[* +])}"
+puts "Part 2: #{run(input, %w[* + ||])}"
