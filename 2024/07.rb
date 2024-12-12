@@ -45,11 +45,21 @@ def target_equal?(target, integers, comb)
 end
 
 def run(input, operators)
-  input.inject(0) do |memo, (target, integers)|
+  Parallel.map(input, in_processes: 8) do |target, integers|
     comb = permutations(integers.length - 1, operators)
-    memo += target if comb.any? { |c| target_equal?(target, integers.dup, c) }
-    memo
-  end
+    if comb.any? { |c| target_equal?(target, integers.dup, c) }
+      target
+    else
+      0
+    end
+  end.sum
+end
+
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'parallel'
 end
 
 puts "Part 1: #{run(input, %w[* +])}"
