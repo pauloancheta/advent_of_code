@@ -9,18 +9,19 @@ class Clock
   end
 
   def move(step)
+    is_clockwise = step.positive?
     step.abs.times do
       @zero_pass += 1 if @position.zero?
-      stepper(clockwise: step.positive?)
+      stepper(clockwise: is_clockwise)
     end
   end
 
   def stepper(clockwise: true)
-    if clockwise
-      @position < MAX ? @position += 1 : @position = MIN
-    else
-      @position > MIN ? @position -= 1 : @position = MAX
-    end
+    @position = if clockwise
+                  @position < MAX ? @position + 1 : MIN
+                else
+                  @position > MIN ? @position - 1 : MAX
+                end
   end
 end
 
