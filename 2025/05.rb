@@ -46,7 +46,7 @@ loop do
   @old_cache = @cache.dup
 end
 
-part2 = @cache.sum { |r| r.max - r.min + 1 } # 0 index hence + 1
+part2 = @cache.sum(&:size)
 pp part2
 
 # test2: 14
